@@ -1,0 +1,8 @@
+{
+  "name": "USAFAST LEILÕES HUB | Leilões Americanos de iPhones",
+  "description": "Plataforma USAFAST LEILÕES HUB: leilões americanos de iPhones e smartphones no atacado e varejo, grading oficial (A+, A, B, C), importação de planilhas XML/Excel e sistema de ofertas em tempo real.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

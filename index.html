@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function() {
+        try {
+          var _origFetch = window.fetch ? window.fetch.bind(window) : null;
+          Object.defineProperty(window, 'fetch', {
+            configurable: true,
+            enumerable: true,
+            get: function() {
+              return _origFetch;
+            },
+            set: function(fn) {
+              _origFetch = fn;
+            }
+          });
+        } catch (e) {
+          // ignore if environment restricts redefinition
+        }
+        // Prevent browser extension background errors from breaking the page
+        window.addEventListener('error', function(e) {
+          if (e && e.filename && e.filename.indexOf('chrome-extension://') !== -1) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }, true);
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>USAFAST LEILÕES HUB | Leilões Americanos de iPhones</title>
+    <meta name="description" content="USAFAST LEILÕES HUB: Plataforma consolidada de leilões americanos de iPhones com especificações técnicas completas, grading oficial (Grade A+, A, B, C, Verizon DNA) e acesso direto ao nosso sistema de leilões e ofertas." />
+    <meta property="og:title" content="USAFAST LEILÕES HUB | Leilões Americanos de iPhones" />
+    <meta property="og:description" content="USAFAST LEILÕES HUB: Catálogo e lances para leilões americanos de iPhones, com grading minucioso, manifestos completos e acesso ao nosso sistema de arrematação." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-[#0b0f17] text-slate-100 antialiased font-sans selection:bg-amber-500/20 selection:text-amber-300">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

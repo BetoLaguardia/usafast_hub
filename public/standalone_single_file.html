@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>USAFAST LEILÕES HUB | Leilões Americanos de iPhones</title>
+  <meta name="description" content="USAFAST LEILÕES HUB - Plataforma de leilões americanos de iPhones e smartphones com especificações técnicas, grading Verizon DNA (A(T) DNA, B(T) DNB, C(T) DNC), lotes no atacado e acesso direto ao nosso sistema de leilões." />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              amber: '#f59e0b',
+              red: '#dc2626'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- SheetJS (XLSX) CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <style>
+    body { background-color: #030712; color: #f3f4f6; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-amber-400 selection:text-slate-950">
+
+  <!-- ========================================== -->
+  <!-- TOP PERSISTENT BAR (DOIS LINKS OBRIGATÓRIOS) -->
+  <!-- ========================================== -->
+  <div class="bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-slate-950 text-xs font-bold py-2 px-4 shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-slate-950 animate-ping"></span>
+        <span class="tracking-wide uppercase text-[11px]">USAFAST LEILÕES HUB · Sistema Oficial de Leilões dos EUA · Miami Doral Logistics</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="openSystemModal('login')" class="px-3 py-1 bg-slate-950 text-amber-400 hover:bg-slate-900 rounded-lg text-xs font-bold transition-all shadow-sm">
+          ➔ Acessar Sistema de Leilões
+        </button>
+        <button onclick="openSystemModal('register')" class="px-3 py-1 bg-white text-slate-950 hover:bg-slate-100 rounded-lg text-xs font-black transition-all shadow-sm border border-slate-900/20">
+          ★ Cadastrar no Sistema de Leilões
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- HEADER & NAVIGATION -->
+  <!-- ========================================== -->
+  <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-10 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('home')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-amber-500/20">
+          ⚡
+        </div>
+        <div>
+          <span class="text-base sm:text-lg font-black text-white tracking-tight flex items-center gap-1.5">
+            USAFAST <span class="text-amber-400">LEILÕES HUB</span>
+          </span>
+          <span class="text-[10px] text-slate-400 font-mono block -mt-1">
+            VERIZON DIRECT USA · MIAMI HUB
+          </span>
+        </div>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="hidden md:flex items-center gap-1 text-xs font-semibold">
+        <button onclick="navigate('home')" id="nav-home" class="px-3 py-2 rounded-lg text-amber-400 bg-slate-800/80 transition-colors">Início</button>
+        <button onclick="navigate('leiloes')" id="nav-leiloes" class="px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Leilões</button>
+        <button onclick="navigate('gradeamento')" id="nav-gradeamento" class="px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Gradeamento</button>
+        <button onclick="navigate('quemsomos')" id="nav-quemsomos" class="px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Quem Somos</button>
+        <button onclick="navigate('cliente')" id="nav-cliente" class="px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Painel do Cliente</button>
+        <button onclick="navigate('admin')" id="nav-admin" class="px-3 py-2 rounded-lg text-amber-400 hover:bg-amber-400/10 border border-amber-500/30 transition-colors">Painel Admin</button>
+      </nav>
+
+      <!-- PHP / API Status Pill -->
+      <div class="flex items-center gap-2">
+        <div id="php-status-pill" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono bg-slate-800 border border-slate-700 text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="php-mode-label">PHP API: Simulado</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================== -->
+  <!-- MAIN APP CONTAINER -->
+  <!-- ========================================== -->
+  <main id="app-content" class="flex-1 pb-16"></main>
+
+  <!-- ========================================== -->
+  <!-- MODAL: DETALHES DO LOTE & LANCE RÁPIDO -->
+  <!-- ========================================== -->
+  <div id="modal-lot-detail" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto custom-scrollbar p-6 space-y-6">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center gap-2">
+          <span id="modal-lot-num" class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-amber-400 font-mono text-xs font-bold"></span>
+          <span id="modal-lot-verizon-badge" class="hidden px-2 py-0.5 rounded bg-red-600 text-white font-bold text-[10px]">VERIZON OFICIAL</span>
+        </div>
+        <button onclick="closeLotModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <img id="modal-lot-img" src="" alt="Aparelho" class="w-full aspect-[4/3] object-cover rounded-xl border border-slate-800" />
+        </div>
+        <div class="space-y-4">
+          <h3 id="modal-lot-title" class="text-lg font-bold text-white"></h3>
+          <p id="modal-lot-desc" class="text-xs text-slate-300 leading-relaxed"></p>
+
+          <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-2 text-xs">
+            <div class="flex justify-between"><span class="text-slate-400">Lance Atual:</span><span id="modal-lot-bid-usd" class="font-bold text-emerald-400 font-mono"></span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Total de Aparelhos:</span><span id="modal-lot-qty" class="font-bold text-white"></span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Classificação (Grade):</span><span id="modal-lot-grade" class="font-bold text-amber-400"></span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Revenda Estimada Brasil:</span><span id="modal-lot-retail-brl" class="font-bold text-cyan-400 font-mono"></span></div>
+          </div>
+
+          <!-- Quick Bid Form -->
+          <form onsubmit="handleModalBidSubmit(event)" class="space-y-3 pt-2">
+            <label class="text-xs font-bold text-slate-200 block">Enviar Lance para este Lote (USD):</label>
+            <div class="flex items-center gap-2">
+              <input type="number" id="modal-bid-input" min="1" step="25" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-white focus:border-amber-400 focus:outline-none" />
+              <button type="submit" class="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs transition-all">
+                Confirmar Lance
+              </button>
+            </div>
+            <div class="flex gap-2">
+              <button type="button" onclick="adjustModalBid(25)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs">+ $25</button>
+              <button type="button" onclick="adjustModalBid(50)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs">+ $50</button>
+              <button type="button" onclick="adjustModalBid(100)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs">+ $100</button>
+              <a id="modal-official-link" href="#" target="_blank" class="hidden ml-auto text-amber-400 text-xs underline py-1">Ver Anúncio Oficial ↗</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Manifest Table -->
+      <div class="space-y-2 pt-2 border-t border-slate-800">
+        <h4 class="text-xs font-bold text-white flex items-center justify-between">
+          <span>Manifesto de Aparelhos do Lote:</span>
+          <span id="modal-manifest-count" class="text-slate-400 font-normal"></span>
+        </h4>
+        <div class="overflow-x-auto max-h-48 overflow-y-auto border border-slate-800 rounded-xl bg-slate-950">
+          <table class="w-full text-left text-[11px] border-collapse">
+            <thead>
+              <tr class="bg-slate-900 border-b border-slate-800 text-slate-400">
+                <th class="p-2">#</th>
+                <th class="p-2">Modelo</th>
+                <th class="p-2">Memória</th>
+                <th class="p-2">Part #</th>
+                <th class="p-2">Origem Estoque</th>
+                <th class="p-2">Grade</th>
+                <th class="p-2">IMEI Status</th>
+              </tr>
+            </thead>
+            <tbody id="modal-manifest-rows" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: SISTEMA DE LEILÕES (LOGIN/CADASTRO) -->
+  <!-- ========================================== -->
+  <div id="modal-system" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 id="modal-system-title" class="text-base font-bold text-white">Acessar Sistema de Leilões dos EUA</h3>
+        <button onclick="closeSystemModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="text-slate-400 block mb-1">Nome Completo / Razão Social:</label>
+          <input type="text" id="sys-name" value="Carlos Mendes (Tech Imports)" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white" />
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">E-mail Corporativo:</label>
+          <input type="email" id="sys-email" value="carlos@techimports.com.br" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white" />
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">CPF ou CNPJ:</label>
+          <input type="text" id="sys-doc" value="18.492.301/0001-44" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white" />
+        </div>
+        <div>
+          <label class="text-slate-400 block mb-1">WhatsApp / Telefone:</label>
+          <input type="text" id="sys-phone" value="+55 (11) 98844-1290" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-white" />
+        </div>
+        <button onclick="handleSystemAuthSubmit()" class="w-full py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl transition-all">
+          Confirmar e Habilitar Acesso
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT: ENGINE COMPLETO (VERIZON & PHP)-->
+  <!-- ========================================== -->
+  <script>
+    // ----------------------------------------------------
+    // CONFIGURAÇÃO DO SERVIDOR PHP & API FETCH
+    // ----------------------------------------------------
+    const PHP_CONFIG = {
+      baseUrl: localStorage.getItem('php_api_base_url') || 'http://localhost/api',
+      enabled: localStorage.getItem('php_api_enabled') === 'true',
+      pollingInterval: 4000
+    };
+
+    // Dados iniciais de leilões
+    let AUCTIONS = JSON.parse(localStorage.getItem('standalone_auctions_data') || 'null') || [
+      {
+        id: 'lot-vz-1',
+        lotNumber: 'ATT_RL1_20261103_382',
+        title: 'Samsung Cell Phones - Galaxy Z Fold5 5G - 159 Units - Grade C(T)',
+        modelFamily: 'Galaxy Z Fold5 5G',
+        oemBrand: 'Samsung',
+        quantity: 159,
+        grade: 'Grade C',
+        primaryStorage: '256GB / 512GB',
+        carrierStatus: 'Verizon Clean / Desbloqueado Global',
+        auctionHouse: 'Verizon Direct Liquidation',
+        location: 'Dallas, TX / Miami Logistics Hub',
+        startingBidUsd: 13500,
+        currentBidUsd: 18200,
+        estimatedBrazilRetailBrl: 155000,
+        endTime: new Date(Date.now() + 1000 * 60 * 60 * 26).toISOString(),
+        imageUrl: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=800&auto=format&fit=crop&q=80',
+        listingUrl: '',
+        sourceType: 'VERIZON',
+        description: 'Lote oficial VERIZON contendo 159 aparelhos inspecionados com laudo técnico.',
+        manifest: [
+          { model: 'Galaxy Z Fold5 5G', storage: '256GB', color: 'Black', grade: 'Grade C', partNumber: 'J819D', inventorySource: 'Insurance', qty: 11 },
+          { model: 'Galaxy Z Fold5 5G', storage: '512GB', color: 'Black', grade: 'Grade C', partNumber: 'J816D', inventorySource: 'Insurance', qty: 10 },
+          { model: 'Galaxy Z Fold5 5G', storage: '256GB', color: 'Black', grade: 'Grade C', partNumber: 'S819D', inventorySource: 'Warranty', qty: 9 }
+        ],
+        bidsHistory: [
+          { id: 'b1', bidderName: 'Tech Imports Brasil', amountUsd: 18200, timestamp: 'Hoje, 14:10' }
+        ]
+      },
+      {
+        id: 'lot-ip-1',
+        lotNumber: 'US-99100-MIA',
+        title: 'Palete 10x iPhone 16 Pro Max 256GB Desert Titanium Grade A+',
+        modelFamily: 'iPhone 16 Pro Max',
+        oemBrand: 'Apple',
+        quantity: 10,
+        grade: 'Grade A+',
+        primaryStorage: '256GB',
+        carrierStatus: 'Factory Unlocked (Global)',
+        auctionHouse: 'Apple Certified Wholesale',
+        location: 'Miami, FL (Armazém 01)',
+        startingBidUsd: 6500,
+        currentBidUsd: 7850,
+        estimatedBrazilRetailBrl: 84000,
+        endTime: new Date(Date.now() + 1000 * 60 * 60 * 18).toISOString(),
+        imageUrl: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80',
+        sourceType: 'CUSTOM',
+        description: 'Lote de vitrine impecável. 10 unidades com saúde de bateria 95-100%.',
+        manifest: [
+          { model: 'iPhone 16 Pro Max', storage: '256GB', color: 'Desert Titanium', grade: 'Grade A+', partNumber: 'A3106', inventorySource: 'Trade-In', qty: 10 }
+        ],
+        bidsHistory: [
+          { id: 'b2', bidderName: 'Pedro Apple Reseller', amountUsd: 7850, timestamp: 'Hoje, 13:45' }
+        ]
+      }
+    ];
+
+    let CURRENT_PAGE = 'home';
+    let CURRENT_USER = {
+      name: 'Carlos Mendes',
+      email: 'carlos@techimports.com.br',
+      cpfCnpj: '18.492.301/0001-44',
+      phone: '+55 (11) 98844-1290',
+      biddingLimitUsd: 30000,
+      verified: true
+    };
+    let ACTIVE_MODAL_LOT = null;
+    let VERIZON_RAW_GROUPS = [];
+
+    function saveAuctions() {
+      localStorage.setItem('standalone_auctions_data', JSON.stringify(AUCTIONS));
+    }
+
+    // ----------------------------------------------------
+    // FUNÇÕES PRONTAS DE INTEGRAÇÃO COM PHP VIA FETCH
+    // ----------------------------------------------------
+    async function phpApiFetchAuctions() {
+      if (!PHP_CONFIG.enabled) return AUCTIONS;
+      try {
+        console.log(`[PHP Fetch] GET ${PHP_CONFIG.baseUrl}/auctions.php`);
+        const res = await fetch(`${PHP_CONFIG.baseUrl}/auctions.php`);
+        if (res.ok) {
+          const json = await res.json();
+          if (Array.isArray(json.data) && json.data.length > 0) {
+            AUCTIONS = json.data;
+            saveAuctions();
+            renderApp();
+          }
+        }
+      } catch (err) {
+        console.warn('[PHP Fetch] Falha ao sincronizar leilões com PHP:', err);
+      }
+      return AUCTIONS;
+    }
+
+    async function phpApiSendBid(lotId, amountUsd, lotTitle, lotNumber) {
+      const payload = {
+        lotId,
+        lotNumber,
+        lotTitle,
+        amountUsd,
+        bidderName: CURRENT_USER.name,
+        bidderEmail: CURRENT_USER.email,
+        isAutoSniper: false
+      };
+
+      console.log(`[PHP Fetch] POST ${PHP_CONFIG.baseUrl}/bids.php`, payload);
+
+      if (PHP_CONFIG.enabled) {
+        try {
+          const res = await fetch(`${PHP_CONFIG.baseUrl}/bids.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            console.log('[PHP Fetch] Lance gravado no servidor PHP!');
+          }
+        } catch (e) {
+          console.warn('[PHP Fetch] Erro ao enviar lance para PHP, mantendo localmente:', e);
+        }
+      }
+
+      // Atualiza localmente
+      const lot = AUCTIONS.find(l => l.id === lotId);
+      if (lot) {
+        lot.currentBidUsd = amountUsd;
+        lot.bidsHistory.unshift({
+          id: 'bid_' + Date.now(),
+          bidderName: CURRENT_USER.name,
+          amountUsd,
+          timestamp: 'Agora mesmo'
+        });
+        saveAuctions();
+        renderApp();
+      }
+    }
+
+    async function phpApiBatchImport(lots, filename) {
+      const payload = {
+        filename,
+        lotsCount: lots.length,
+        lots
+      };
+
+      console.log(`[PHP Fetch] POST ${PHP_CONFIG.baseUrl}/import.php`, payload);
+
+      if (PHP_CONFIG.enabled) {
+        try {
+          const res = await fetch(`${PHP_CONFIG.baseUrl}/import.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            console.log('[PHP Fetch] Lotes importados no servidor PHP com sucesso!');
+          }
+        } catch (e) {
+          console.warn('[PHP Fetch] Falha no POST import.php, salvando no localStorage:', e);
+        }
+      }
+
+      AUCTIONS = lots;
+      saveAuctions();
+      renderApp();
+    }
+
+    // ----------------------------------------------------
+    // MOTOR DE PARSER DO PADRÃO OFICIAL VERIZON
+    // Regra: No Verizon, trocar grades para A(T) DNA, B(T) DNB, C(T) DNC, D(T) DND
+    // ----------------------------------------------------
+    function mapVerizonGrade(raw) {
+      const g = String(raw || '').trim().toUpperCase();
+      if (g.includes('A(T)') || g.includes('DNA') || g.includes('A+') || (g.includes('A') && !g.includes('B') && !g.includes('C') && !g.includes('D'))) return 'A(T) DNA';
+      if (g.includes('B(T)') || g.includes('DNB') || g.includes('B') || g.includes('A/B')) return 'B(T) DNB';
+      if (g.includes('C(T)') || g.includes('DNC') || g.includes('C')) return 'C(T) DNC';
+      if (g.includes('D(T)') || g.includes('DND') || g.includes('D')) return 'D(T) DND';
+      return 'C(T) DNC';
+    }
+
+    function parseVerizonCsvOrArray(rawRows, baseUnitRate = 85) {
+      const groups = new Map();
+
+      rawRows.forEach((r, idx) => {
+        const lotNum = String(r['Lot #'] || r['Lot#'] || r['Lot'] || '').trim();
+        if (!lotNum) return;
+
+        if (!groups.has(lotNum)) {
+          groups.set(lotNum, {
+            lotNumber: lotNum,
+            title: String(r['Title'] || `Lote ${lotNum}`).trim(),
+            oem: String(r['OEM'] || 'Samsung').trim(),
+            primaryModel: String(r['Model'] || 'Smartphone').trim(),
+            gradeRaw: String(r['Grade'] || 'C(T)').trim(),
+            endDate: r['End Date'],
+            endTime: r['End Time'],
+            url: String(r['URL'] || '').trim(),
+            totalQty: 0,
+            models: new Set(),
+            capacities: new Set(),
+            colors: new Set(),
+            sources: new Set(),
+            manifest: []
+          });
+        }
+
+        const g = groups.get(lotNum);
+        const q = parseInt(r['Qty'] || 1, 10) || 1;
+        g.totalQty += q;
+
+        const model = String(r['Model'] || g.primaryModel).trim();
+        const cap = String(r['Capacity'] || '128GB').trim();
+        const color = String(r['Color'] || 'Black').trim();
+        const source = String(r['Inventory Source'] || 'Carrier Return').trim();
+
+        if (model) g.models.add(model);
+        if (cap) g.capacities.add(cap);
+        if (color) g.colors.add(color);
+        if (source) g.sources.add(source);
+
+        const mappedItemGrade = mapVerizonGrade(r['Grade'] || g.gradeRaw);
+
+        g.manifest.push({
+          model,
+          storage: cap,
+          color,
+          grade: mappedItemGrade,
+          partNumber: String(r['Part #'] || ''),
+          inventorySource: source,
+          itemDescription: String(r['Item Description'] || ''),
+          qty: q
+        });
+      });
+
+      const resultLots = Array.from(groups.values()).map((g, idx) => {
+        const isPremium = /fold|ultra|pro max/i.test(g.primaryModel);
+        const isBudget = /a1|a2|a0/i.test(g.primaryModel);
+        const perUnit = isPremium ? baseUnitRate * 1.6 : isBudget ? baseUnitRate * 0.6 : baseUnitRate;
+        const currentBidUsd = Math.max(200, Math.round(g.totalQty * perUnit));
+        const mappedLotGrade = mapVerizonGrade(g.gradeRaw);
+
+        return {
+          id: 'vz_' + g.lotNumber.replace(/[^a-zA-Z0-9]/g, '_'),
+          lotNumber: g.lotNumber,
+          title: g.title,
+          modelFamily: g.primaryModel,
+          oemBrand: g.oem,
+          quantity: g.totalQty,
+          grade: mappedLotGrade,
+          primaryStorage: Array.from(g.capacities).slice(0, 2).join(' / ') || '128GB',
+          carrierStatus: 'Verizon Clean / Desbloqueado Global',
+          auctionHouse: 'Verizon Direct Liquidation',
+          location: 'Dallas, TX / Miami Logistics Hub',
+          startingBidUsd: Math.round(currentBidUsd * 0.75),
+          currentBidUsd: currentBidUsd,
+          estimatedBrazilRetailBrl: Math.round(currentBidUsd * 5.8 * 1.55),
+          endTime: new Date(Date.now() + 1000 * 60 * 60 * 28).toISOString(),
+          imageUrl: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=800&auto=format&fit=crop&q=80',
+          listingUrl: g.url,
+          sourceType: 'VERIZON',
+          description: `Lote oficial do padrão VERIZON contendo ${g.totalQty} unidades. Fontes: ${Array.from(g.sources).join(', ') || 'Carrier'}. Classificação técnica: ${mappedLotGrade}.`,
+          manifest: g.manifest,
+          bidsHistory: [
+            { id: 'b_init', bidderName: 'Licitante EUA Inicial', amountUsd: currentBidUsd, timestamp: 'Início do Leilão' }
+          ]
+        };
+      });
+
+      return resultLots;
+    }
+
+    // ----------------------------------------------------
+    // NAVEGAÇÃO ENTRE TELAS
+    // ----------------------------------------------------
+    function navigate(page) {
+      CURRENT_PAGE = page;
+      document.querySelectorAll('nav button').forEach(b => {
+        b.classList.remove('text-amber-400', 'bg-slate-800/80');
+        b.classList.add('text-slate-300');
+      });
+      const activeBtn = document.getElementById('nav-' + page);
+      if (activeBtn) {
+        activeBtn.classList.add('text-amber-400', 'bg-slate-800/80');
+        activeBtn.classList.remove('text-slate-300');
+      }
+      renderApp();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ----------------------------------------------------
+    // RENDERIZADOR PRINCIPAL
+    // ----------------------------------------------------
+    function renderApp() {
+      const container = document.getElementById('app-content');
+      
+      // Update PHP Status Pill
+      const statusLabel = document.getElementById('php-mode-label');
+      if (statusLabel) {
+        statusLabel.textContent = PHP_CONFIG.enabled 
+          ? `PHP API: ${PHP_CONFIG.baseUrl.replace('http://', '').replace('https://', '').slice(0, 18)}`
+          : 'PHP API: Simulado (Local)';
+      }
+
+      if (CURRENT_PAGE === 'home') {
+        container.innerHTML = renderHome();
+      } else if (CURRENT_PAGE === 'leiloes') {
+        container.innerHTML = renderLeiloes();
+      } else if (CURRENT_PAGE === 'gradeamento') {
+        container.innerHTML = renderGradeamento();
+      } else if (CURRENT_PAGE === 'quemsomos') {
+        container.innerHTML = renderQuemSomos();
+      } else if (CURRENT_PAGE === 'cliente') {
+        container.innerHTML = renderCliente();
+      } else if (CURRENT_PAGE === 'admin') {
+        container.innerHTML = renderAdmin();
+      }
+    }
+
+    // ----------------------------------------------------
+    // TELAS (VIEWS)
+    // ----------------------------------------------------
+    function renderHome() {
+      return `
+        <div class="space-y-12">
+          <!-- Hero Section -->
+          <section class="relative py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center space-y-6">
+            <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+              ● PLATAFORMA DE ARREMATAÇÃO DIRETA NOS EUA
+            </span>
+            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight max-w-4xl mx-auto">
+              Leilões de iPhones & Smartphones com <span class="text-amber-400">Padrão VERIZON</span> e Entrega no Brasil
+            </h1>
+            <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+              Arremate paletes no atacado ou unidades avulsas das maiores operadoras americanas (Verizon, AT&T) com laudos de 30 pontos e suporte aduaneiro via Miami.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-4 pt-2">
+              <button onclick="navigate('leiloes')" class="px-6 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-xl text-xs sm:text-sm shadow-lg shadow-amber-400/20 transition-all">
+                Explorar Todos os Leilões Ativos ➔
+              </button>
+              <button onclick="navigate('admin')" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs sm:text-sm border border-slate-700 transition-all">
+                ⚙️ Painel Admin & Conexão PHP
+              </button>
+            </div>
+          </section>
+
+          <!-- Destaques -->
+          <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-xl font-bold text-white">Leilões em Andamento</h2>
+                <p class="text-xs text-slate-400">Dê lances em tempo real ou ative o robô sniper</p>
+              </div>
+              <button onclick="navigate('leiloes')" class="text-amber-400 text-xs font-semibold hover:underline">Ver catálogo completo (${AUCTIONS.length}) ➔</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              ${AUCTIONS.slice(0, 3).map(renderLotCard).join('')}
+            </div>
+          </section>
+        </div>
+      `;
+    }
+
+    function renderLeiloes() {
+      return `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <div>
+              <h1 class="text-2xl font-black text-white">Catálogo Completo de Leilões dos EUA</h1>
+              <p class="text-xs text-slate-400">Total de ${AUCTIONS.length} lotes disponíveis para arrematação</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="filterBySource('all')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-800 text-white">Todos</button>
+              <button onclick="filterBySource('VERIZON')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-600 text-white shadow-md shadow-red-600/30">⚡ Padrão VERIZON</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            ${AUCTIONS.map(renderLotCard).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGradeamento() {
+      return `
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 text-xs text-slate-300">
+          <div>
+            <h1 class="text-2xl font-black text-white">Metodologia de Gradeamento Técnico (CTIA Standards)</h1>
+            <p class="text-slate-400 mt-1">Conheça os critérios de classificação rigorosa aplicados nos Estados Unidos</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-2">
+              <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/30">Grade A+ (Mint / Impecável)</span>
+              <p>Estado de zero, sem arranhões visíveis mesmo com luz focada. Bateria 92% a 100%. Margem máxima de revenda no Brasil.</p>
+            </div>
+            <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-2">
+              <span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 font-bold border border-cyan-500/30">Grade A (Excelente)</span>
+              <p>Sem marcas de queda; micro-arranhões superficiais quase invisíveis. 100% aprovado no diagnóstico Apple e operadoras.</p>
+            </div>
+            <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-2">
+              <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 font-bold border border-amber-500/30">Grade B (Sinais de Uso)</span>
+              <p>Desgastes estéticos leves ou marcas de capinha. Câmeras, Face ID e placa 100% perfeitos. Alta liquidez de revenda.</p>
+            </div>
+            <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-2">
+              <span class="px-2 py-0.5 rounded bg-orange-500/10 text-orange-400 font-bold border border-orange-500/30">Grade C (Econômico / Verizon C(T))</span>
+              <p>Marcas estéticas de uso evidentes. IMEI limpo (Clean ESN) e teste de funcionalidade de 30 pontos aprovado.</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderQuemSomos() {
+      return `
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6 text-xs text-slate-300 leading-relaxed">
+          <h1 class="text-2xl font-black text-white">Sobre a US Auction Hub</h1>
+          <p>
+            Fundada em Miami (Flórida) com hub logístico em Doral, conectamos importadores e lojistas brasileiros diretamente aos leilões de devolução de seguros, contratos corporativos e retornos de operadoras norte-americanas (Verizon, AT&T e T-Mobile).
+          </p>
+          <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-2">
+            <h3 class="font-bold text-white text-sm">Garantias e Benefícios Oficiais:</h3>
+            <ul class="list-disc pl-5 space-y-1 text-slate-400">
+              <li>100% dos aparelhos com IMEI verificado e Clean ESN.</li>
+              <li>Recebimento e consolidação em galpão com seguro em Miami.</li>
+              <li>Despacho expresso aéreo com desembaraço aduaneiro.</li>
+              <li>Plataforma preparada para integração com banco de dados próprio em PHP e MySQL.</li>
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCliente() {
+      return `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+          <div class="p-6 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-xl font-black text-white">Painel do Arrematante Cadastrado</h1>
+                <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/30">● HABILITADO</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">${CURRENT_USER.name} · CPF/CNPJ: ${CURRENT_USER.cpfCnpj} · Limite: $${CURRENT_USER.biddingLimitUsd.toLocaleString()} USD</p>
+            </div>
+            <button onclick="copyMiamiAddress()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl border border-slate-700">
+              Copiar Endereço de Recebimento em Miami 📋
+            </button>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-base font-bold text-white">Lista de Modelos & Pregões Disponíveis (${AUCTIONS.length} lotes)</h3>
+                <p class="text-xs text-slate-400">Clique em "⚡ Dar Oferta" ou utilize os botões rápidos para computar seu lance</p>
+              </div>
+            </div>
+
+            <!-- TABELA / LISTA DE MODELOS E OFERTAS -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-950 text-slate-400 font-mono uppercase text-[10px] border-b border-slate-800">
+                    <tr>
+                      <th class="p-3">Foto</th>
+                      <th class="p-3">Modelo & Lote</th>
+                      <th class="p-3">Grade</th>
+                      <th class="p-3">Qtd / Memória</th>
+                      <th class="p-3">Lance Atual</th>
+                      <th class="p-3 text-center">Oferta Rápida</th>
+                      <th class="p-3 text-right">Ação</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-800 font-sans">
+                    ${AUCTIONS.map(lot => `
+                      <tr class="hover:bg-slate-800/40">
+                        <td class="p-3">
+                          <img src="${lot.imageUrl}" alt="${lot.title}" class="w-12 h-12 rounded-xl object-cover border border-slate-800 shrink-0 cursor-pointer" onclick="openLotDetail('${lot.id}')" />
+                        </td>
+                        <td class="p-3">
+                          <span class="font-bold text-white text-sm block cursor-pointer hover:text-amber-400" onclick="openLotDetail('${lot.id}')">${lot.modelFamily}</span>
+                          <span class="text-[11px] text-slate-400 block line-clamp-1">${lot.title}</span>
+                          <span class="font-mono text-[10px] text-amber-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">${lot.lotNumber}</span>
+                        </td>
+                        <td class="p-3">
+                          <span class="px-2 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">${lot.grade}</span>
+                        </td>
+                        <td class="p-3 font-mono">
+                          <span class="text-white font-bold block">${lot.quantity} un</span>
+                          <span class="text-slate-400 text-[10px]">${lot.primaryStorage}</span>
+                        </td>
+                        <td class="p-3 font-mono">
+                          <span class="text-emerald-400 font-bold text-sm block">$${lot.currentBidUsd.toLocaleString()} USD</span>
+                          <span class="text-slate-400 text-[10px]">≈ R$ ${(lot.currentBidUsd * 5.8).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}</span>
+                        </td>
+                        <td class="p-3">
+                          <div class="flex items-center justify-center gap-1 font-mono">
+                            <button onclick="handleQuickBidDirect('${lot.id}', 25)" class="py-1 px-1.5 bg-slate-800 hover:bg-amber-400 hover:text-slate-950 text-amber-300 rounded text-[10px] font-bold border border-slate-700">+25</button>
+                            <button onclick="handleQuickBidDirect('${lot.id}', 50)" class="py-1 px-1.5 bg-slate-800 hover:bg-amber-400 hover:text-slate-950 text-amber-300 rounded text-[10px] font-bold border border-slate-700">+50</button>
+                            <button onclick="handleQuickBidDirect('${lot.id}', 100)" class="py-1 px-1.5 bg-slate-800 hover:bg-amber-400 hover:text-slate-950 text-amber-300 rounded text-[10px] font-bold border border-slate-700">+100</button>
+                          </div>
+                        </td>
+                        <td class="p-3 text-right">
+                          <button onclick="openLotDetail('${lot.id}')" class="px-3.5 py-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black rounded-xl text-xs transition-all shadow-md active:scale-95">
+                            ⚡ Dar Oferta
+                          </button>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAdmin() {
+      return `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+            <div>
+              <h1 class="text-2xl font-black text-white">Painel Admin Master · Importador & API PHP</h1>
+              <p class="text-xs text-slate-400">Importação de planilhas VERIZON, gestão de lances e integração de backend</p>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="downloadStandaloneSelf()" class="px-3.5 py-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-xl text-xs shadow-md">
+                📥 Baixar Arquivo Único (index.html)
+              </button>
+            </div>
+          </div>
+
+          <!-- BANNER PADRÃO VERIZON -->
+          <div class="p-6 bg-gradient-to-r from-red-950/40 via-slate-900 to-amber-950/30 border border-red-500/40 rounded-2xl space-y-4">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div>
+                <span class="px-2 py-0.5 rounded bg-red-600 text-white font-black text-[10px] uppercase">PADRÃO VERIZON</span>
+                <h3 class="text-lg font-bold text-white mt-1">Importador em Lote Oficial VERIZON</h3>
+                <p class="text-xs text-slate-300">Reconhece as 16 colunas oficiais e agrupa linhas pelo mesmo Lot # somando unidades.</p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button onclick="loadSampleVerizonLots()" class="px-4 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-xs shadow-lg shadow-red-600/30">
+                  ⚡ Carregar Catálogo VERIZON Oficial
+                </button>
+              </div>
+            </div>
+
+            <!-- Upload File / Paste -->
+            <div class="pt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="p-4 bg-slate-950 rounded-xl border border-dashed border-slate-700 text-center space-y-2">
+                <input type="file" id="admin-file-input" accept=".xlsx,.xls,.csv" onchange="handleAdminFileUpload(event)" class="hidden" />
+                <button type="button" onclick="document.getElementById('admin-file-input').click()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-lg">
+                  Subir Arquivo Excel/CSV
+                </button>
+                <span class="text-[11px] text-slate-500 block">Formato VERIZON ou personalizado</span>
+              </div>
+
+              <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+                <textarea id="admin-paste-input" rows="2" placeholder="Cole aqui as linhas da sua planilha (Ctrl+V)..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs font-mono text-white"></textarea>
+                <button onclick="handleAdminPasteSubmit()" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold text-xs rounded-lg">
+                  Processar Linhas Coladas
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- CONEXÃO PHP / BACKEND FETCH SETTINGS -->
+          <div class="p-6 bg-slate-900 border border-slate-800 rounded-2xl space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <span>🔌</span> Configuração de Conexão com Backend PHP / Fetch
+            </h3>
+            <p class="text-xs text-slate-400">
+              Configure o endereço da sua pasta da API em PHP (Apache, XAMPP, Nginx ou cPanel) para envio e polling de lances em tempo real.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div class="space-y-1">
+                <label class="text-slate-300 font-medium">URL Base da API PHP:</label>
+                <input type="text" id="php-url-input" value="${PHP_CONFIG.baseUrl}" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-mono" />
+              </div>
+              <div class="space-y-1">
+                <label class="text-slate-300 font-medium">Modo de Operação:</label>
+                <select id="php-mode-select" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white">
+                  <option value="false" ${!PHP_CONFIG.enabled ? 'selected' : ''}>Modo Simulado Local (Offline / LocalStorage)</option>
+                  <option value="true" ${PHP_CONFIG.enabled ? 'selected' : ''}>Modo Servidor PHP Real (Fetch Ativo)</option>
+                </select>
+              </div>
+              <div class="flex items-end">
+                <button onclick="saveAndTestPhpConfig()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs">
+                  ⚡ Salvar & Testar Conexão PHP
+                </button>
+              </div>
+            </div>
+
+            <div id="php-test-feedback" class="text-xs font-mono p-3 rounded-lg bg-slate-950 border border-slate-800 text-slate-400">
+              Status atual: Operando com persistência no navegador. Ao apontar para seu PHP, as chamadas serão roteadas automaticamente.
+            </div>
+
+            <!-- Download PHP Scripts -->
+            <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-800 text-xs">
+              <button onclick="downloadPhpScript('auctions.php')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg">Baixar auctions.php</button>
+              <button onclick="downloadPhpScript('bids.php')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg">Baixar bids.php</button>
+              <button onclick="downloadPhpScript('import.php')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg">Baixar import.php</button>
+              <button onclick="downloadPhpScript('schema.sql')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg">Baixar schema.sql</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderLotCard(lot) {
+      const isVerizon = lot.sourceType === 'VERIZON';
+      return `
+        <div class="bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-2xl overflow-hidden flex flex-col justify-between shadow-xl transition-all">
+          <div class="relative aspect-[4/3] bg-slate-950 overflow-hidden cursor-pointer" onclick="openLotDetail('${lot.id}')">
+            <img src="${lot.imageUrl}" alt="${lot.title}" class="w-full h-full object-cover transition-transform hover:scale-105" />
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/30"></div>
+            
+            <div class="absolute top-3 left-3 flex items-center gap-1.5">
+              <span class="px-2 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">${lot.grade}</span>
+              ${isVerizon ? '<span class="px-2 py-0.5 rounded bg-red-600 text-white font-bold text-[10px]">VERIZON</span>' : ''}
+            </div>
+            
+            <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-slate-300">
+              <span class="font-mono bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800 text-amber-300">${lot.lotNumber}</span>
+              <span class="bg-slate-900/80 px-2 py-0.5 rounded border border-slate-800">${lot.quantity} ${lot.quantity === 1 ? 'Aparelho' : 'Aparelhos'}</span>
+            </div>
+          </div>
+
+          <div class="p-4 space-y-3 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="text-[11px] text-slate-400 flex items-center justify-between">
+                <span>${lot.auctionHouse}</span>
+                <span>${lot.location}</span>
+              </div>
+              <h3 onclick="openLotDetail('${lot.id}')" class="font-bold text-white text-sm line-clamp-2 cursor-pointer hover:text-amber-400 transition-colors mt-1">
+                ${lot.title}
+              </h3>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-[10px] text-slate-400 block">Lance Atual:</span>
+                <span class="text-sm font-bold text-emerald-400 font-mono">$${lot.currentBidUsd.toLocaleString()} USD</span>
+              </div>
+              <button onclick="openLotDetail('${lot.id}')" class="px-3 py-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold rounded-lg text-xs transition-all">
+                Dar Lance ➔
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ----------------------------------------------------
+    // MODAL DE DETALHES DO LOTE
+    // ----------------------------------------------------
+    function openLotDetail(lotId) {
+      const lot = AUCTIONS.find(l => l.id === lotId);
+      if (!lot) return;
+
+      ACTIVE_MODAL_LOT = lot;
+      document.getElementById('modal-lot-num').textContent = lot.lotNumber;
+      document.getElementById('modal-lot-title').textContent = lot.title;
+      document.getElementById('modal-lot-desc').textContent = lot.description;
+      document.getElementById('modal-lot-img').src = lot.imageUrl;
+      document.getElementById('modal-lot-bid-usd').textContent = `$${lot.currentBidUsd.toLocaleString()} USD`;
+      document.getElementById('modal-lot-qty').textContent = `${lot.quantity} unidades`;
+      document.getElementById('modal-lot-grade').textContent = lot.grade;
+      document.getElementById('modal-lot-retail-brl').textContent = `R$ ${lot.estimatedBrazilRetailBrl.toLocaleString('pt-BR')}`;
+      document.getElementById('modal-bid-input').value = lot.currentBidUsd + 25;
+
+      const verizonBadge = document.getElementById('modal-lot-verizon-badge');
+      if (lot.sourceType === 'VERIZON') {
+        verizonBadge.classList.remove('hidden');
+      } else {
+        verizonBadge.classList.add('hidden');
+      }
+
+      const officialLink = document.getElementById('modal-official-link');
+      if (lot.listingUrl || lot.originalListingUrl) {
+        officialLink.href = lot.listingUrl || lot.originalListingUrl;
+        officialLink.classList.remove('hidden');
+      } else {
+        officialLink.classList.add('hidden');
+      }
+
+      // Manifest rows
+      const manifestTbody = document.getElementById('modal-manifest-rows');
+      document.getElementById('modal-manifest-count').textContent = `(${lot.manifest.length} itens listados)`;
+      manifestTbody.innerHTML = lot.manifest.map((m, idx) => `
+        <tr class="hover:bg-slate-900">
+          <td class="p-2 font-mono text-slate-500">${idx + 1}</td>
+          <td class="p-2 font-medium text-white">${m.model}</td>
+          <td class="p-2 font-mono">${m.storage}</td>
+          <td class="p-2 font-mono text-slate-400">${m.partNumber || '-'}</td>
+          <td class="p-2">${m.inventorySource || 'Return'}</td>
+          <td class="p-2">${m.grade}</td>
+          <td class="p-2 text-emerald-400">Clean ESN</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('modal-lot-detail').classList.remove('hidden');
+    }
+
+    function closeLotModal() {
+      document.getElementById('modal-lot-detail').classList.add('hidden');
+      ACTIVE_MODAL_LOT = null;
+    }
+
+    function adjustModalBid(amount) {
+      if (!ACTIVE_MODAL_LOT) return;
+      const input = document.getElementById('modal-bid-input');
+      input.value = ACTIVE_MODAL_LOT.currentBidUsd + amount;
+    }
+
+    async function handleModalBidSubmit(e) {
+      e.preventDefault();
+      if (!ACTIVE_MODAL_LOT) return;
+
+      const amount = parseFloat(document.getElementById('modal-bid-input').value);
+      if (isNaN(amount) || amount <= ACTIVE_MODAL_LOT.currentBidUsd) {
+        alert('O lance precisa ser superior ao valor atual!');
+        return;
+      }
+
+      await phpApiSendBid(ACTIVE_MODAL_LOT.id, amount, ACTIVE_MODAL_LOT.title, ACTIVE_MODAL_LOT.lotNumber);
+      alert(`Lance de $${amount.toLocaleString()} USD computado com sucesso!`);
+      closeLotModal();
+    }
+
+    async function handleQuickBidDirect(lotId, incAmount) {
+      const lot = AUCTIONS.find(l => l.id === lotId);
+      if (!lot) return;
+      const newAmount = lot.currentBidUsd + incAmount;
+      await phpApiSendBid(lot.id, newAmount, lot.title, lot.lotNumber);
+      alert(`⚡ Oferta rápida computada!\nLote: ${lot.lotNumber} (${lot.modelFamily})\nNovo Lance: $${newAmount.toLocaleString()} USD`);
+      renderApp();
+    }
+
+    // ----------------------------------------------------
+    // MODAL DE AUTENTICAÇÃO / CADASTRO
+    // ----------------------------------------------------
+    function openSystemModal(type) {
+      document.getElementById('modal-system-title').textContent = type === 'register' 
+        ? 'Cadastrar no Sistema de Leilões dos EUA' 
+        : 'Acessar Sistema de Leilões dos EUA';
+      document.getElementById('modal-system').classList.remove('hidden');
+    }
+
+    function closeSystemModal() {
+      document.getElementById('modal-system').classList.add('hidden');
+    }
+
+    function handleSystemAuthSubmit() {
+      CURRENT_USER.name = document.getElementById('sys-name').value;
+      CURRENT_USER.email = document.getElementById('sys-email').value;
+      CURRENT_USER.cpfCnpj = document.getElementById('sys-doc').value;
+      CURRENT_USER.phone = document.getElementById('sys-phone').value;
+      closeSystemModal();
+      alert(`Parabéns ${CURRENT_USER.name}! Acesso liberado ao sistema com limite de $${CURRENT_USER.biddingLimitUsd.toLocaleString()} USD.`);
+      navigate('cliente');
+    }
+
+    function copyMiamiAddress() {
+      const text = `US iPhone Auction Hub / ${CURRENT_USER.name}\n8350 NW 53rd Street, Suite 302\nDoral / Miami - FL 33166\nPhone: +1 (305) 555-0199`;
+      navigator.clipboard.writeText(text);
+      alert('Endereço de Miami copiado para a área de transferência!');
+    }
+
+    // ----------------------------------------------------
+    // IMPORTAÇÃO DE PLANILHA NO ADMIN
+    // ----------------------------------------------------
+    function handleAdminFileUpload(e) {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const wb = XLSX.read(evt.target.result, { type: 'binary' });
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          const json = XLSX.utils.sheet_to_json(ws);
+          
+          if (!json || json.length === 0) {
+            alert('A planilha parece vazia!');
+            return;
+          }
+
+          const parsedLots = parseVerizonCsvOrArray(json);
+          phpApiBatchImport(parsedLots, file.name);
+          alert(`${parsedLots.length} lotes importados com sucesso!`);
+          navigate('leiloes');
+        } catch (err) {
+          alert('Erro ao processar planilha: ' + err.message);
+        }
+      };
+      reader.readAsBinaryString(file);
+    }
+
+    function handleAdminPasteSubmit() {
+      const text = document.getElementById('admin-paste-input').value.trim();
+      if (!text) return;
+      try {
+        const wb = XLSX.read(text, { type: 'string' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(ws);
+        const parsedLots = parseVerizonCsvOrArray(json);
+        phpApiBatchImport(parsedLots, 'texto_colado.xlsx');
+        alert(`${parsedLots.length} lotes colados importados com sucesso!`);
+        navigate('leiloes');
+      } catch (e) {
+        alert('Erro ao processar dados colados: ' + e.message);
+      }
+    }
+
+    function loadSampleVerizonLots() {
+      // 50 Lotes no padrão oficial com grades Verizon DNA
+      const sample = [];
+      const models = ['Galaxy Z Fold5 5G', 'Galaxy S25 FE', 'Galaxy Z Fold6 5G', 'Galaxy A16 5G', 'Galaxy S24 Ultra', 'Galaxy S23 Ultra', 'Galaxy Z Flip5 5G'];
+      const vzGrades = ['A(T) DNA', 'B(T) DNB', 'C(T) DNC'];
+      for (let i = 1; i <= 50; i++) {
+        const model = models[i % models.length];
+        const qty = Math.floor(Math.random() * 80) + 10;
+        const currentBid = Math.round(qty * 85);
+        const grade = vzGrades[i % vzGrades.length];
+        sample.push({
+          id: `vz_auto_${i}`,
+          lotNumber: `ATT_RL1_20261103_${350 + i}`,
+          title: `Samsung Cell Phones - ${model} - ${qty} Units - Grade ${grade}`,
+          modelFamily: model,
+          oemBrand: 'Samsung',
+          quantity: qty,
+          grade: grade,
+          primaryStorage: '256GB',
+          carrierStatus: 'Verizon Clean / Desbloqueado Global',
+          auctionHouse: 'Verizon Direct Liquidation',
+          location: 'Dallas, TX / Miami Hub',
+          startingBidUsd: Math.round(currentBid * 0.75),
+          currentBidUsd: currentBid,
+          estimatedBrazilRetailBrl: Math.round(currentBid * 5.8 * 1.55),
+          endTime: new Date(Date.now() + 1000 * 60 * 60 * (15 + (i % 24))).toISOString(),
+          imageUrl: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=800&auto=format&fit=crop&q=80',
+          listingUrl: '',
+          sourceType: 'VERIZON',
+          description: `Lote oficial VERIZON contendo ${qty} aparelhos com classificação técnica ${grade} e relatório de conformidade.`,
+          manifest: [
+            { model, storage: '256GB', color: 'Black', grade: grade, partNumber: `J${800 + i}`, inventorySource: 'Insurance', qty }
+          ],
+          bidsHistory: [
+            { id: `b_init_${i}`, bidderName: 'Tech Imports Brasil', amountUsd: currentBid, timestamp: 'Início do Leilão' }
+          ]
+        });
+      }
+
+      phpApiBatchImport(sample, 'catalogo_oficial_verizon.csv');
+      alert(`50 Lotes Oficiais VERIZON (${sample.reduce((a,b)=>a+b.quantity,0)} aparelhos com padrão DNA) publicados!`);
+      navigate('leiloes');
+    }
+
+    // ----------------------------------------------------
+    // TESTE DA CONEXÃO PHP
+    // ----------------------------------------------------
+    async function saveAndTestPhpConfig() {
+      const url = document.getElementById('php-url-input').value.trim();
+      const enabled = document.getElementById('php-mode-select').value === 'true';
+      const feedback = document.getElementById('php-test-feedback');
+
+      PHP_CONFIG.baseUrl = url;
+      PHP_CONFIG.enabled = enabled;
+      localStorage.setItem('php_api_base_url', url);
+      localStorage.setItem('php_api_enabled', String(enabled));
+
+      feedback.textContent = `Testando conexão com ${url}/health.php ...`;
+      feedback.className = 'text-xs font-mono p-3 rounded-lg bg-slate-950 border border-slate-700 text-amber-300';
+
+      try {
+        const start = performance.now();
+        const res = await fetch(`${url}/health.php?t=${Date.now()}`, { signal: AbortSignal.timeout(3500) });
+        const latency = Math.round(performance.now() - start);
+
+        if (res.ok) {
+          const json = await res.json().catch(() => ({}));
+          feedback.textContent = `✅ SUCESSO! Servidor PHP Conectado (${latency}ms). Modo: ${json.mode || 'Ativo'}.`;
+          feedback.className = 'text-xs font-mono p-3 rounded-lg bg-emerald-950/40 border border-emerald-500 text-emerald-300';
+        } else {
+          feedback.textContent = `⚠️ Resposta do Servidor PHP: HTTP ${res.status} (${res.statusText}).`;
+          feedback.className = 'text-xs font-mono p-3 rounded-lg bg-amber-950/40 border border-amber-500 text-amber-300';
+        }
+      } catch (err) {
+        feedback.textContent = `ℹ️ Host PHP inacessível (${err.message}). O sistema continua funcionando perfeitamente em Modo Simulado Local.`;
+        feedback.className = 'text-xs font-mono p-3 rounded-lg bg-slate-950 border border-slate-800 text-slate-400';
+      }
+
+      renderApp();
+    }
+
+    // ----------------------------------------------------
+    // DOWNLOAD DOS ARQUIVOS PHP E DO PRÓPRIO HTML
+    // ----------------------------------------------------
+    function downloadStandaloneSelf() {
+      const htmlContent = document.documentElement.outerHTML;
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'leiloes_iphones_standalone.html';
+      a.click();
+    }
+
+    function downloadPhpScript(filename) {
+      window.open(`/backend_php/${filename}`, '_blank');
+    }
+
+    // Iniciar aplicação
+    renderApp();
+
+    // Polling de lances em tempo real a cada 4 segundos
+    setInterval(async () => {
+      if (PHP_CONFIG.enabled) {
+        try {
+          const res = await fetch(`${PHP_CONFIG.baseUrl}/bids.php?poll=1&t=${Date.now()}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.latestBid) {
+              const lot = AUCTIONS.find(l => l.id === data.latestBid.lotId);
+              if (lot && data.latestBid.newBidAmount > lot.currentBidUsd) {
+                lot.currentBidUsd = data.latestBid.newBidAmount;
+                saveAuctions();
+                renderApp();
+              }
+            }
+          }
+        } catch (e) {}
+      }
+    }, PHP_CONFIG.pollingInterval);
+  </script>
+</body>
+</html>
